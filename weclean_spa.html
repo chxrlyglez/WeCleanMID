@@ -1,0 +1,236 @@
+<!-- Chosen Palette: Warm Neutrals (bg-gray-50) with Teal Accents (text-teal-600) -->
+<!-- Application Structure Plan: Dashboard de Comunicación. La arquitectura se divide en tres secciones principales: 1) Encabezado y Contexto (motivo del cambio), 2) Panel Interactivo (muestra la tarifa y la regla de planes basada en la frecuencia seleccionada), y 3) Justificación Visual (gráfico que apoya la necesidad del aumento). Esta estructura fue elegida para priorizar la usabilidad, poniendo la información crucial (el ajuste de precio y la regla de planes) en el centro de la interacción, haciendo que el usuario se involucre activamente con la política más compleja. -->
+<!-- Visualization & Content Choices: Summary: Precio y Frecuencia -> Goal: Organizar/Explicar -> Viz/Presentation Method: Selector de Planes y Texto Dinámico -> Interaction: Botones de selección de frecuencia actualizan precio y regla -> Justification: Clarifica el impacto del precio según la frecuencia. Summary: Costos Operacionales -> Goal: Justificar/Contexto -> Viz/Presentation Method: Gráfico de Barras (Chart.js) -> Interaction: N/A -> Justification: Da credibilidad visual al argumento de "incremento en costos operativos". Library/Method - Confirming NO SVG/Mermaid, supporting the DESIGNED structure. -->
+<!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WeClean MID | Aviso Importante: Ajuste de Tarifas 2026</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
+    <style>
+        .font-inter { font-family: 'Inter', sans-serif; }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px;
+            max-height: 400px;
+            padding-top: 20px;
+        }
+    </style>
+</head>
+<body class="font-inter bg-gray-50 text-gray-800 antialiased">
+
+    <div class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+        <header class="text-center py-8 bg-white rounded-xl shadow-lg mb-8 border-t-4 border-teal-600">
+            <h1 class="text-4xl sm:text-5xl font-extrabold text-teal-700">WeClean MID</h1>
+            <p class="mt-2 text-xl sm:text-2xl font-light text-gray-600">Aviso Importante: Ajuste de Tarifas 2026</p>
+        </header>
+
+        <main class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            
+            <!-- Columna Principal de Comunicación -->
+            <section class="lg:col-span-2 space-y-8">
+                
+                <!-- Tarjeta de Anuncio Principal -->
+                <div class="bg-white p-6 sm:p-8 rounded-xl shadow-lg">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-4">Estimado/a <span class="text-teal-600">[Nombre del Cliente]</span>,</h2>
+                    
+                    <p class="text-lg mb-4 leading-relaxed">De parte de todo el equipo de WeClean MID, queremos expresarte nuestro sincero agradecimiento por la confianza que has depositado en nuestros servicios de limpieza doméstica durante este año. Valoramos enormemente ser tu socio de confianza en el cuidado de tu hogar.</p>
+                    
+                    <div class="border-l-4 border-amber-500 bg-amber-50 p-4 rounded-lg my-6">
+                        <p class="font-semibold text-lg text-amber-800">Te escribimos para informarte de un **ligero ajuste en nuestras tarifas de servicio**, el cual entrará en vigor a partir del **1 de enero de 2026**.</p>
+                    </div>
+
+                    <p class="text-lg mb-4 leading-relaxed">Este cambio es necesario para asegurar que WeClean MID pueda mantener la calidad de excelencia y la dedicación de nuestro equipo, incluso ante el incremento en nuestros costos operativos y la inversión continua en la capacitación del personal. Como sabes, en WeClean MID nos enfocamos exclusivamente en la mano de obra, garantizando que siempre recibas el mejor servicio profesional.</p>
+                </div>
+
+                <!-- Tarjeta Interactiva de Planes y Precios -->
+                <div class="bg-white p-6 sm:p-8 rounded-xl shadow-lg border-t-4 border-teal-600">
+                    <h3 class="text-xl font-bold text-teal-700 mb-6">Tu Plan y la Regla de Frecuencia</h3>
+                    <p class="text-gray-600 mb-6">Usa el selector para ver cómo el ajuste aplica a tu frecuencia de servicio y lee la política de interrupción de planes.</p>
+
+                    <!-- Selector de Frecuencia (Simulación de Planes) -->
+                    <div id="plan-selector" class="flex flex-wrap gap-4 mb-8 justify-center">
+                        <button data-frecuencia="semanal" class="plan-btn bg-teal-600 hover:bg-teal-700 text-white font-semibold py-3 px-6 rounded-full transition duration-300 shadow-md">Semanal</button>
+                        <button data-frecuencia="quincenal" class="plan-btn bg-gray-200 hover:bg-teal-100 text-gray-700 font-semibold py-3 px-6 rounded-full transition duration-300">Quincenal</button>
+                        <button data-frecuencia="mensual" class="plan-btn bg-gray-200 hover:bg-teal-100 text-gray-700 font-semibold py-3 px-6 rounded-full transition duration-300">Mensual</button>
+                        <button data-frecuencia="personalizado" class="plan-btn bg-gray-200 hover:bg-teal-100 text-gray-700 font-semibold py-3 px-6 rounded-full transition duration-300">Personalizado</button>
+                    </div>
+
+                    <!-- Detalle Dinámico -->
+                    <div class="bg-teal-50 p-6 rounded-xl border border-teal-200">
+                        <h4 class="text-lg font-bold text-teal-800 mb-3">Detalle del Ajuste para el Plan <span id="frecuencia-actual" class="capitalize">Semanal</span></h4>
+                        <p class="text-gray-700 mb-4">Tu tarifa actual de limpieza es de **<span id="precio-actual" class="font-extrabold text-xl text-teal-700">[Precio Actual]</span>** y se actualizará a **<span id="precio-nuevo" class="font-extrabold text-xl text-red-600">[Nuevo Precio]</span>** a partir del 1 de enero de 2026.</p>
+                        
+                        <div class="mt-4 pt-4 border-t border-teal-200">
+                            <h5 class="font-bold text-md text-teal-800 mb-2">Política de Interrupción de Frecuencia</h5>
+                            <p id="regla-frecuencia" class="text-sm text-gray-600">Para mantener el precio acordado, es fundamental conservar la frecuencia contratada. En caso de que se **interrumpa la frecuencia** de tu servicio (por ejemplo, si pasas de semanal a mensual o cancelas una visita sin reprogramar), la próxima limpieza se ajustará y se cobrará al **precio del plan superior** (Plan Quincenal en este caso), debido al trabajo extra que requiere restablecer el nivel de limpieza.</p>
+                        </div>
+                    </div>
+
+                </div>
+
+            </section>
+
+            <!-- Columna Lateral de Justificación y Cierre -->
+            <aside class="lg:col-span-1 space-y-8">
+                
+                <!-- Tarjeta de Justificación Visual (Gráfico) -->
+                <div class="bg-white p-6 rounded-xl shadow-lg border-t-4 border-teal-600">
+                    <h3 class="text-xl font-bold text-teal-700 mb-4">Costo Operativo vs. Aumento</h3>
+                    <p class="text-sm text-gray-600 mb-4">El gráfico simula la evolución de nuestros costos operativos anuales, la principal razón del ajuste de tarifas, asegurando la calidad de la mano de obra.</p>
+                    <div class="chart-container">
+                        <canvas id="costosChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Tarjeta de Cierre y Contacto -->
+                <div class="bg-white p-6 rounded-xl shadow-lg">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">Nuestro Compromiso</h3>
+                    <p class="text-lg mb-4 leading-relaxed">Agradecemos de antemano tu comprensión y te reiteramos nuestro compromiso total para seguir brindándote la mejor limpieza profesional para tu hogar.</p>
+                    
+                    <div class="mt-6 border-t pt-4">
+                        <p class="font-semibold text-teal-600">Si tienes preguntas:</p>
+                        <p class="text-sm text-gray-600">No dudes en contactarnos para revisar tu plan actual o resolver cualquier duda.</p>
+                    </div>
+                    
+                    <p class="text-xl font-extrabold text-gray-700 mt-6">¡Gracias por ser parte de la familia WeClean!</p>
+                    <p class="text-sm text-gray-500 mt-2">Atentamente, Equipo WeClean MID</p>
+                </div>
+                
+            </aside>
+        </main>
+
+        <footer class="text-center py-6 mt-8 text-sm text-gray-500">
+            &copy; 2025 WeClean MID. Todas las tarifas se ajustarán el 1 de enero de 2026.
+        </footer>
+    </div>
+
+    <script>
+        const planes = {
+            semanal: {
+                nombre: "Semanal",
+                precioBase: "[Precio Base]",
+                regla: "En caso de interrupción, se cobrará la tarifa del Plan Quincenal."
+            },
+            quincenal: {
+                nombre: "Quincenal",
+                precioBase: "[Precio Base]",
+                regla: "En caso de interrupción, se cobrará la tarifa del Plan Mensual."
+            },
+            mensual: {
+                nombre: "Mensual",
+                precioBase: "[Precio Base]",
+                regla: "En caso de interrupción, se cobrará la tarifa de Limpieza Profunda Única."
+            },
+            personalizado: {
+                nombre: "Personalizado",
+                precioBase: "[Precio Base]",
+                regla: "La regla de interrupción se aplicará según la tarifa inmediatamente superior negociada en tu acuerdo."
+            }
+        };
+
+        const planButtons = document.querySelectorAll('.plan-btn');
+        const frecuenciaDisplay = document.getElementById('frecuencia-actual');
+        const precioActualDisplay = document.getElementById('precio-actual');
+        const precioNuevoDisplay = document.getElementById('precio-nuevo');
+        const reglaFrecuenciaDisplay = document.getElementById('regla-frecuencia');
+        let costosChart;
+
+        function updatePlanDetails(frecuencia) {
+            const plan = planes[frecuencia];
+
+            planButtons.forEach(btn => {
+                const isSelected = btn.dataset.frecuencia === frecuencia;
+                btn.classList.toggle('bg-teal-600', isSelected);
+                btn.classList.toggle('hover:bg-teal-700', isSelected);
+                btn.classList.toggle('text-white', isSelected);
+                btn.classList.toggle('shadow-md', isSelected);
+                btn.classList.toggle('bg-gray-200', !isSelected);
+                btn.classList.toggle('hover:bg-teal-100', !isSelected);
+                btn.classList.toggle('text-gray-700', !isSelected);
+            });
+
+            frecuenciaDisplay.textContent = plan.nombre;
+            precioActualDisplay.textContent = "[Precio Actual]"; 
+            precioNuevoDisplay.textContent = "[Nuevo Precio]";
+            reglaFrecuenciaDisplay.textContent = plan.regla;
+        }
+
+        planButtons.forEach(button => {
+            button.addEventListener('click', (e) => {
+                updatePlanDetails(e.target.dataset.frecuencia);
+            });
+        });
+
+        function initializeChart() {
+            const ctx = document.getElementById('costosChart').getContext('2d');
+            const data = {
+                labels: ['2023', '2024', '2025 (Proy.)', '2026 (Proy.)'],
+                datasets: [{
+                    label: 'Incremento de Costos Operativos (Indexado)',
+                    data: [100, 107, 115, 125],
+                    backgroundColor: 'rgba(6, 182, 212, 0.7)', 
+                    borderColor: 'rgb(6, 182, 212)',
+                    borderWidth: 1,
+                    borderRadius: 4,
+                }, {
+                    label: 'Ajuste de Tarifa WeClean (Indexado)',
+                    data: [100, 100, 100, 105], 
+                    backgroundColor: 'rgba(234, 88, 12, 0.7)',
+                    borderColor: 'rgb(234, 88, 12)',
+                    borderWidth: 1,
+                    borderRadius: 4,
+                }]
+            };
+
+            costosChart = new Chart(ctx, {
+                type: 'bar',
+                data: data,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top',
+                            labels: {
+                                font: {
+                                    size: 10
+                                }
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                title: (items) => items[0].label,
+                                label: (item) => `${item.dataset.label}: ${item.formattedValue}%`
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Índice (Base 100)'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            updatePlanDetails('semanal');
+            initializeChart();
+        });
+    </script>
+</body>
+</html>
